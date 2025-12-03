@@ -302,37 +302,39 @@ Draw help computer.
 void HelpComputer (edict_t *ent)
 {
 	char	string[1024];
-	char	*sk;
+	char*	msg1;
+	char*	msg2;
+	char*	msg3;
+	char*	msg4;
+	char*	msg5;
+	char*	msg6;
+	char*	msg7;
+	char*	msg8;
 
-	if (skill->value == 0)
-		sk = "easy";
-	else if (skill->value == 1)
-		sk = "medium";
-	else if (skill->value == 2)
-		sk = "hard";
-	else
-		sk = "hard+";
+	msg1 = "HELP MENU";
+	msg2 = "Welcome to the Quake II: Stealth Edition!";
+	msg3 = "There are many new features desgined to provide a SOLID stealth experience. These features include:";
+	msg4 = "1. Superpowers (Yes... superpowers!)";
+	msg5 = "2. Weapons";
+	msg6 = "3. Items";
+	msg7 = "4. Stealth Mechanics";
+	msg8 = "5. Level Objectives";
+	
+	Com_sprintf(string, sizeof(string),
+		"xv 125 yv -100 string2 \"%s\" "	// msg1
+		"xv -10 yv -60 string2 \"%s\" "		// msg2
+		"xv -250 yv -40 string2 \"%s\" "	// msg3
+		"xv -250 yv -28 string2 \"%s\" "	// msg4
+		"xv -250 yv -16 string2 \"%s\" "	// msg5
+		"xv -250 yv -4 string2 \"%s\" "	// msg6
+		"xv -250 yv 8 string2 \"%s\" "		// msg7
+		"xv -250 yv 20 string2 \"%s\" ",	// msg8
+		msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8
+	);
 
-	// send the layout
-	Com_sprintf (string, sizeof(string),
-		"xv 32 yv 8 picn help "			// background
-		"xv 202 yv 12 string2 \"%s\" "		// skill
-		"xv 0 yv 24 cstring2 \"%s\" "		// level name
-		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
-		"xv 0 yv 110 cstring2 \"%s\" "		// help 2
-		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
-		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ", 
-		sk,
-		level.level_name,
-		game.helpmessage1,
-		game.helpmessage2,
-		level.killed_monsters, level.total_monsters, 
-		level.found_goals, level.total_goals,
-		level.found_secrets, level.total_secrets);
-
-	gi.WriteByte (svc_layout);
-	gi.WriteString (string);
-	gi.unicast (ent, true);
+	gi.WriteByte(svc_layout);
+	gi.WriteString(string);
+	gi.unicast(ent, true);
 }
 
 
