@@ -903,6 +903,32 @@ void Cmd_MyCommand_f(edict_t *ent) {
 	gi.cprintf(ent, PRINT_HIGH, "Operation Snake Eater\n");
 }
 
+/*
+=================
+Superpowers
+=================
+*/
+
+void Cmd_SuperSpeed_f(edict_t *ent) {
+	ent->speed_active = true;
+}
+
+void Cmd_SuperInvis_f(edict_t* ent) {
+	ent->invis_active = true;
+	//ent->invis_framenum = level.time;
+}
+
+void Cmd_SuperTeleport_f(edict_t* ent) {
+	ent->teleport_active = true;
+}
+
+void Cmd_SuperSomething_f(edict_t* ent) {
+
+}
+
+void Cmd_SuperSomethingElse_f(edict_t* ent) {
+
+}
 
 /*
 =================
@@ -993,6 +1019,12 @@ void ClientCommand (edict_t *ent)
 		Cmd_PlayerList_f(ent);
 	else if (Q_stricmp(cmd, "snake") == 0)
 		Cmd_MyCommand_f(ent);
+	else if (Q_stricmp(cmd, "superspeed") == 0)
+		Cmd_SuperSpeed_f(ent);
+	else if (Q_stricmp(cmd, "superinvis") == 0)
+		Cmd_SuperInvis_f(ent);
+	else if (Q_stricmp(cmd, "superteleport") == 0)
+		Cmd_SuperTeleport_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

@@ -1109,5 +1109,14 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	// superpower timers
+	float		speed_framenum;
+	float		invis_framenum;
+	float		teleport_framenum;
+
+	qboolean	speed_active;
+	qboolean	invis_active;
+	qboolean	teleport_active;
 };
 

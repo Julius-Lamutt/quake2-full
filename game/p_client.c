@@ -1740,6 +1740,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		other = g_edicts + i;
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
+
+	// update superpower status if appropriate
+	SuperPowerActivation(other);
 	}
 }
 
@@ -1802,4 +1805,28 @@ void ClientBeginServerFrame (edict_t *ent)
 			PlayerTrail_Add (ent->s.old_origin);
 
 	client->latched_buttons = 0;
+}
+
+/*
+==============
+SuperPowerActivation
+
+This will be called once for each server frame to detect if
+a super power is in use. If so, it will activate/deactive 
+that specific power.
+==============
+*/
+
+void SuperPowerActivation (edict_t *ent)
+{
+	if (ent->speed_active == true) {
+
+	}
+	if (ent->invis_active == true) {
+		ent->flags ^= FL_NOTARGET;
+		//if (invis_framenum < time)
+	}
+	if (ent->teleport_active == true) {
+
+	}
 }
