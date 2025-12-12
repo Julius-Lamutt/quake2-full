@@ -899,10 +899,6 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
-void Cmd_MyCommand_f(edict_t *ent) {
-	gi.cprintf(ent, PRINT_HIGH, "Operation Snake Eater\n");
-}
-
 /*
 =================
 Superpowers
@@ -910,24 +906,58 @@ Superpowers
 */
 
 void Cmd_SuperSpeed_f(edict_t *ent) {
-	ent->speed_active = true;
+	if (ent->speed_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Speed is already activated!\n");
+	else if (ent->cooldown_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else {
+		ent->speed_active = true;
+		ent->power_framenum = level.time;
+	}
 }
 
 void Cmd_SuperInvis_f(edict_t* ent) {
-	ent->invis_active = true;
-	//ent->invis_framenum = level.time;
+	if (ent->invis_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Invisibility is already activated!\n");
+	else if (ent->cooldown_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else {
+		ent->invis_active = true;
+		ent->power_framenum = level.time;
+	}
 }
 
 void Cmd_SuperTeleport_f(edict_t* ent) {
-	ent->teleport_active = true;
+	if (ent->teleport_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Teleport is already activated!\n");
+	else if (ent->cooldown_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else {
+		ent->teleport_active = true;
+		ent->power_framenum = level.time;
+	}
 }
 
-void Cmd_SuperSomething_f(edict_t* ent) {
-
+void Cmd_SuperInvinc_f(edict_t* ent) {
+	if (ent->invinc_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Invincibility is already activated!\n");
+	else if (ent->cooldown_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else {
+		ent->invinc_active = true;
+		ent->power_framenum = level.time;
+	}
 }
 
-void Cmd_SuperSomethingElse_f(edict_t* ent) {
-
+void Cmd_SuperDummy_f(edict_t* ent) {
+	if (ent->dummy_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Dummy is already activated!\n");
+	else if (ent->cooldown_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else {
+		ent->dummy_active = true;
+		ent->power_framenum = level.time;
+	}
 }
 
 /*
@@ -1017,14 +1047,16 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f(ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
-	else if (Q_stricmp(cmd, "snake") == 0)
-		Cmd_MyCommand_f(ent);
 	else if (Q_stricmp(cmd, "superspeed") == 0)
 		Cmd_SuperSpeed_f(ent);
 	else if (Q_stricmp(cmd, "superinvis") == 0)
 		Cmd_SuperInvis_f(ent);
 	else if (Q_stricmp(cmd, "superteleport") == 0)
 		Cmd_SuperTeleport_f(ent);
+	else if (Q_stricmp(cmd, "superinvinc") == 0)
+		Cmd_SuperInvinc_f(ent);
+	else if (Q_stricmp(cmd, "superdummy") == 0)
+		Cmd_SuperDummy_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

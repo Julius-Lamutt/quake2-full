@@ -754,6 +754,7 @@ void InitClientPersistant (gclient_t *client);
 void InitClientResp (gclient_t *client);
 void InitBodyQue (void);
 void ClientBeginServerFrame (edict_t *ent);
+void ClientSuperpowerActivation(edict_t* ent);
 
 //
 // g_player.c
@@ -1110,13 +1111,15 @@ struct edict_s
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
 
-	// superpower timers
-	float		speed_framenum;
-	float		invis_framenum;
-	float		teleport_framenum;
+	// superpower data
+	float		power_framenum;
+	float 		cooldown_framenum;
 
 	qboolean	speed_active;
 	qboolean	invis_active;
 	qboolean	teleport_active;
+	qboolean    invinc_active;
+	qboolean	dummy_active;
+	qboolean	cooldown_active;
 };
 

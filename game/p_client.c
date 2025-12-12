@@ -1614,7 +1614,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		for (i=0 ; i<3 ; i++)
 		{
-			pm.s.origin[i] = ent->s.origin[i]*8;
+			pm.s.origin[i] = ent->s.origin[i]*8; 
 			pm.s.velocity[i] = ent->velocity[i]*8;
 		}
 
@@ -1741,8 +1741,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 
-	// update superpower status if appropriate
-	SuperPowerActivation(other);
+	// update superpower status if activated
+	ClientSuperpowerActivation(ent);
 	}
 }
 
@@ -1809,7 +1809,7 @@ void ClientBeginServerFrame (edict_t *ent)
 
 /*
 ==============
-SuperPowerActivation
+ClientSuperpowerActivation
 
 This will be called once for each server frame to detect if
 a super power is in use. If so, it will activate/deactive 
@@ -1817,16 +1817,63 @@ that specific power.
 ==============
 */
 
-void SuperPowerActivation (edict_t *ent)
+void ClientSuperpowerActivation (edict_t *ent)
 {
-	if (ent->speed_active == true) {
-
+	if (ent->speed_active) 
+	{
+		if (level.time - ent->power_framenum >= 5.0) {
+			ent->flags ^= FL_NOTARGET;
+			ent->invis_active = false;
+			ent->cooldown_active = true;
+			ent->cooldown_framenum = level.time;
+		}
+		else
+			ent->flags ^= FL_NOTARGET;
 	}
-	if (ent->invis_active == true) {
-		ent->flags ^= FL_NOTARGET;
-		//if (invis_framenum < time)
+	else if (ent->invis_active) 
+	{
+		if (level.time - ent->power_framenum >= 5.0) {
+			ent->flags ^= FL_NOTARGET;
+			ent->invis_active = false;
+			ent->cooldown_active = true;
+			ent->cooldown_framenum = level.time;
+		}
+		else
+			ent->flags ^= FL_NOTARGET;
 	}
-	if (ent->teleport_active == true) {
-
+	else if (ent->teleport_active) 
+	{
+		if (level.time - ent->power_framenum >= 5.0) {
+			ent->flags ^= FL_NOTARGET;
+			ent->invis_active = false;
+			ent->cooldown_active = true;
+			ent->cooldown_framenum = level.time;
+		}
+		else
+			ent->flags ^= FL_NOTARGET;
 	}
+	else if (ent->invinc_active) 
+	{
+		if (level.time - ent->power_framenum >= 5.0) {
+			ent->flags ^= FL_GODMODE;
+			ent->invis_active = false;
+			ent->cooldown_active = true;
+			ent->cooldown_framenum = level.time;
+		}
+		else
+			ent->flags ^= FL_GODMODE;
+	}
+	else if (ent->dummy_active)
+	{
+		if (level.time - ent->power_framenum >= 5.0) {
+			ent->flags ^= FL_NOTARGET;
+			ent->invis_active = false;
+			ent->cooldown_active = true;
+			ent->cooldown_framenum = level.time;
+		}
+		else
+			ent->flags ^= FL_NOTARGET;
+	}
+	else if (level.time - ent->cooldown_framenum >= 10.0) 
+		ent->cooldown_active = false;
 }
