@@ -908,6 +908,8 @@ Superpowers
 void Cmd_SuperSpeed_f(edict_t *ent) {
 	if (ent->speed_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Speed is already activated!\n");
+	else if (ent->power_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
 	else if (ent->cooldown_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
 	else {
@@ -919,8 +921,12 @@ void Cmd_SuperSpeed_f(edict_t *ent) {
 void Cmd_SuperInvis_f(edict_t* ent) {
 	if (ent->invis_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Invisibility is already activated!\n");
+	else if (ent->power_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
 	else if (ent->cooldown_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else if (ent->detected == true)
+		gi.cprintf(ent, PRINT_HIGH, "You cannot activate invisibility while in combat!\n");
 	else {
 		ent->invis_active = true;
 		ent->power_framenum = level.time;
@@ -930,6 +936,8 @@ void Cmd_SuperInvis_f(edict_t* ent) {
 void Cmd_SuperTeleport_f(edict_t* ent) {
 	if (ent->teleport_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Teleport is already activated!\n");
+	else if (ent->power_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
 	else if (ent->cooldown_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
 	else {
@@ -941,6 +949,8 @@ void Cmd_SuperTeleport_f(edict_t* ent) {
 void Cmd_SuperInvinc_f(edict_t* ent) {
 	if (ent->invinc_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Invincibility is already activated!\n");
+	else if (ent->power_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
 	else if (ent->cooldown_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
 	else {
@@ -952,6 +962,8 @@ void Cmd_SuperInvinc_f(edict_t* ent) {
 void Cmd_SuperDummy_f(edict_t* ent) {
 	if (ent->dummy_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Dummy is already activated!\n");
+	else if (ent->power_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
 	else if (ent->cooldown_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
 	else {

@@ -1741,7 +1741,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 
-	// update superpower status if activated
+	// update superpower status
 	ClientSuperpowerActivation(ent);
 	}
 }
@@ -1781,7 +1781,7 @@ void ClientBeginServerFrame (edict_t *ent)
 	if (ent->deadflag)
 	{
 		// wait for any button just going down
-		if ( level.time > client->respawn_time)
+		if (level.time > client->respawn_time)
 		{
 			// in deathmatch, only wait for attack button
 			if (deathmatch->value)
@@ -1819,7 +1819,7 @@ that specific power.
 
 void ClientSuperpowerActivation (edict_t *ent)
 {
-	if (ent->speed_active) 
+	if (ent->speed_active) // check super speed
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
 			ent->flags ^= FL_NOTARGET;
@@ -1830,7 +1830,7 @@ void ClientSuperpowerActivation (edict_t *ent)
 		else
 			ent->flags ^= FL_NOTARGET;
 	}
-	else if (ent->invis_active) 
+	else if (ent->invis_active) // check invisibility
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
 			ent->flags ^= FL_NOTARGET;
@@ -1841,7 +1841,7 @@ void ClientSuperpowerActivation (edict_t *ent)
 		else
 			ent->flags ^= FL_NOTARGET;
 	}
-	else if (ent->teleport_active) 
+	else if (ent->teleport_active) // check teleport
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
 			ent->flags ^= FL_NOTARGET;
@@ -1852,7 +1852,7 @@ void ClientSuperpowerActivation (edict_t *ent)
 		else
 			ent->flags ^= FL_NOTARGET;
 	}
-	else if (ent->invinc_active) 
+	else if (ent->invinc_active) // check invincibility
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
 			ent->flags ^= FL_GODMODE;
@@ -1863,7 +1863,7 @@ void ClientSuperpowerActivation (edict_t *ent)
 		else
 			ent->flags ^= FL_GODMODE;
 	}
-	else if (ent->dummy_active)
+	else if (ent->dummy_active) // check dummy
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
 			ent->flags ^= FL_NOTARGET;
@@ -1874,6 +1874,12 @@ void ClientSuperpowerActivation (edict_t *ent)
 		else
 			ent->flags ^= FL_NOTARGET;
 	}
-	else if (level.time - ent->cooldown_framenum >= 10.0) 
+	else if (level.time - ent->cooldown_framenum >= 10.0) // check cooldown
 		ent->cooldown_active = false;
+
+	// check if ANY power is active
+	if (ent->speed_active || ent->invis_active || ent->teleport_active || ent->invinc_active || ent->dummy_active)
+		ent->power_active = true;
+	else 
+		ent->power_active = false;
 }

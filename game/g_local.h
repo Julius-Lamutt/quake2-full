@@ -1112,14 +1112,18 @@ struct edict_s
 	monsterinfo_t	monsterinfo;
 
 	// superpower data
-	float		power_framenum;
-	float 		cooldown_framenum;
+	float		power_framenum;		
+	float 		cooldown_framenum;	
 
 	qboolean	speed_active;
 	qboolean	invis_active;
 	qboolean	teleport_active;
 	qboolean    invinc_active;
 	qboolean	dummy_active;
+	qboolean    power_active;
 	qboolean	cooldown_active;
+
+	// miscellaneous
+	qboolean	detected;
 };
 
