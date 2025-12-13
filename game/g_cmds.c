@@ -959,15 +959,15 @@ void Cmd_SuperInvinc_f(edict_t* ent) {
 	}
 }
 
-void Cmd_SuperDummy_f(edict_t* ent) {
-	if (ent->dummy_active == true)
+void Cmd_SuperDrain_f(edict_t* ent) {
+	if (ent->drain_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Dummy is already activated!\n");
 	else if (ent->power_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
 	else if (ent->cooldown_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
 	else {
-		ent->dummy_active = true;
+		ent->drain_active = true;
 		ent->power_framenum = level.time;
 	}
 }
@@ -1067,8 +1067,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_SuperTeleport_f(ent);
 	else if (Q_stricmp(cmd, "superinvinc") == 0)
 		Cmd_SuperInvinc_f(ent);
-	else if (Q_stricmp(cmd, "superdummy") == 0)
-		Cmd_SuperDummy_f(ent);
+	else if (Q_stricmp(cmd, "superdrain") == 0)
+		Cmd_SuperDrain_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

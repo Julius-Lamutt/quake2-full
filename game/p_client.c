@@ -1823,7 +1823,7 @@ void ClientSuperpowerActivation (edict_t *ent)
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
 			ent->flags ^= FL_NOTARGET;
-			ent->invis_active = false;
+			ent->speed_active = false;
 			ent->cooldown_active = true;
 			ent->cooldown_framenum = level.time;
 		}
@@ -1845,7 +1845,7 @@ void ClientSuperpowerActivation (edict_t *ent)
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
 			ent->flags ^= FL_NOTARGET;
-			ent->invis_active = false;
+			ent->teleport_active = false;
 			ent->cooldown_active = true;
 			ent->cooldown_framenum = level.time;
 		}
@@ -1856,18 +1856,18 @@ void ClientSuperpowerActivation (edict_t *ent)
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
 			ent->flags ^= FL_GODMODE;
-			ent->invis_active = false;
+			ent->invinc_active = false;
 			ent->cooldown_active = true;
 			ent->cooldown_framenum = level.time;
 		}
 		else
 			ent->flags ^= FL_GODMODE;
 	}
-	else if (ent->dummy_active) // check dummy
+	else if (ent->drain_active) // check drain
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
 			ent->flags ^= FL_NOTARGET;
-			ent->invis_active = false;
+			ent->drain_active = false;
 			ent->cooldown_active = true;
 			ent->cooldown_framenum = level.time;
 		}
@@ -1878,7 +1878,7 @@ void ClientSuperpowerActivation (edict_t *ent)
 		ent->cooldown_active = false;
 
 	// check if ANY power is active
-	if (ent->speed_active || ent->invis_active || ent->teleport_active || ent->invinc_active || ent->dummy_active)
+	if (ent->speed_active || ent->invis_active || ent->teleport_active || ent->invinc_active || ent->drain_active)
 		ent->power_active = true;
 	else 
 		ent->power_active = false;

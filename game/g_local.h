@@ -1119,7 +1119,7 @@ struct edict_s
 	qboolean	invis_active;
 	qboolean	teleport_active;
 	qboolean    invinc_active;
-	qboolean	dummy_active;
+	qboolean	drain_active;
 	qboolean    power_active;
 	qboolean	cooldown_active;
 
