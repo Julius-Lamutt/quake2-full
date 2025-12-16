@@ -1825,7 +1825,8 @@ void ClientSuperpowerActivation (edict_t *ent)
 	if (ent->speed_active) // check super speed
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
-			ent->flags ^= FL_NOTARGET;
+			gi.AddCommandString("cl_forwardspeed 200");
+			gi.AddCommandString("cl_sidespeed 175");
 			ent->speed_active = false;
 			ent->cooldown_active = true;
 			ent->cooldown_framenum = level.time;

@@ -914,6 +914,8 @@ void Cmd_SuperSpeed_f(edict_t *ent)
 	else if (ent->cooldown_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
 	else {
+		gi.AddCommandString("cl_forwardspeed 500)");
+		gi.AddCommandString("cl_sidespeed 300");
 		ent->speed_active = true;
 		ent->power_framenum = level.time;
 		ent->s.event = EV_PLAYER_TELEPORT;
