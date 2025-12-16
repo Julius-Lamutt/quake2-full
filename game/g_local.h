@@ -1124,6 +1124,8 @@ struct edict_s
 	qboolean	cooldown_active;
 
 	// miscellaneous
+	edict_t     *target_enemy;
+
 	qboolean	detected;
 };
 

@@ -905,7 +905,8 @@ Superpowers
 =================
 */
 
-void Cmd_SuperSpeed_f(edict_t *ent) {
+void Cmd_SuperSpeed_f(edict_t *ent) 
+{
 	if (ent->speed_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Speed is already activated!\n");
 	else if (ent->power_active == true)
@@ -915,10 +916,12 @@ void Cmd_SuperSpeed_f(edict_t *ent) {
 	else {
 		ent->speed_active = true;
 		ent->power_framenum = level.time;
+		ent->s.event = EV_PLAYER_TELEPORT;
 	}
 }
 
-void Cmd_SuperInvis_f(edict_t* ent) {
+void Cmd_SuperInvis_f(edict_t* ent) 
+{
 	if (ent->invis_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Invisibility is already activated!\n");
 	else if (ent->power_active == true)
@@ -930,23 +933,54 @@ void Cmd_SuperInvis_f(edict_t* ent) {
 	else {
 		ent->invis_active = true;
 		ent->power_framenum = level.time;
+		ent->flags ^= FL_NOTARGET;
+		ent->s.event = EV_PLAYER_TELEPORT;
 	}
 }
 
-void Cmd_SuperTeleport_f(edict_t* ent) {
+void Cmd_SuperTeleport_f(edict_t* ent) 
+{
+	edict_t* enemy;
+	vec3_t  vec;
+	int		enemy_dist;
+	int		closest_dist = 701;
+
+	enemy = NULL;
+	while ((enemy = findradius(enemy, ent->s.origin, 700)) != NULL)
+	{
+		if (enemy == ent)
+			continue;
+		if (!enemy->takedamage)
+			continue;
+
+		VectorSubtract(enemy->s.origin, ent->s.origin, vec);
+		enemy_dist = VectorLength(vec);
+
+		if (enemy_dist < closest_dist) {
+			closest_dist = enemy_dist;
+			ent->target_enemy = enemy;
+		}
+	}
+
 	if (ent->teleport_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Teleport is already activated!\n");
+	else if (ent->target_enemy == NULL)
+		gi.cprintf(ent, PRINT_HIGH, "Enemy not in range!\n");
 	else if (ent->power_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
 	else if (ent->cooldown_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
 	else {
+		ent->s.origin[2] = ent->target_enemy->s.origin[2] + 150;
+		ent->s.origin[1] = ent->target_enemy->s.origin[1];
+		ent->s.origin[0] = ent->target_enemy->s.origin[0];
 		ent->teleport_active = true;
-		ent->power_framenum = level.time;
+		ent->s.event = EV_PLAYER_TELEPORT;
 	}
 }
 
-void Cmd_SuperInvinc_f(edict_t* ent) {
+void Cmd_SuperInvinc_f(edict_t* ent) 
+{
 	if (ent->invinc_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Invincibility is already activated!\n");
 	else if (ent->power_active == true)
@@ -956,19 +990,50 @@ void Cmd_SuperInvinc_f(edict_t* ent) {
 	else {
 		ent->invinc_active = true;
 		ent->power_framenum = level.time;
+		ent->flags ^= FL_GODMODE;
+		ent->s.event = EV_PLAYER_TELEPORT;
 	}
 }
 
-void Cmd_SuperDrain_f(edict_t* ent) {
+void Cmd_SuperDrain_f(edict_t* ent) 
+{
+	edict_t	*enemy;
+	vec3_t  vec;
+	int		enemy_dist;
+	int		closest_dist = 701;
+
+	ent->target_ent = NULL;
+	enemy = NULL;
+	while ((enemy = findradius(enemy, ent->s.origin, 700)) != NULL)
+	{
+		if (enemy == ent)
+			continue;
+		if (!enemy->takedamage)
+			continue;
+
+		VectorSubtract(enemy->s.origin, ent->s.origin, vec);
+		enemy_dist = VectorLength(vec);
+
+		if (enemy_dist < closest_dist) {
+			closest_dist = enemy_dist;
+			ent->target_enemy = enemy;
+		}
+	}
+
 	if (ent->drain_active == true)
-		gi.cprintf(ent, PRINT_HIGH, "Dummy is already activated!\n");
+		gi.cprintf(ent, PRINT_HIGH, "Drain is already activated!\n");
+	else if (ent->target_enemy == NULL)
+		gi.cprintf(ent, PRINT_HIGH, "Enemy not in range!\n");
+	else if (ent->health == 200)
+		gi.cprintf(ent, PRINT_HIGH, "You are already at full health!\n");
 	else if (ent->power_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
 	else if (ent->cooldown_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
 	else {
 		ent->drain_active = true;
-		ent->power_framenum = level.time;
+		ent->target_enemy->health = 1;
+		ent->s.event = EV_PLAYER_TELEPORT;
 	}
 }
 

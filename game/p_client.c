@@ -1819,6 +1819,9 @@ that specific power.
 
 void ClientSuperpowerActivation (edict_t *ent)
 {
+	edict_t	*enemy;
+	vec3_t	org;
+
 	if (ent->speed_active) // check super speed
 	{
 		if (level.time - ent->power_framenum >= 5.0) {
@@ -1826,31 +1829,24 @@ void ClientSuperpowerActivation (edict_t *ent)
 			ent->speed_active = false;
 			ent->cooldown_active = true;
 			ent->cooldown_framenum = level.time;
+			ent->s.event = EV_PLAYER_TELEPORT;
 		}
-		else
-			ent->flags ^= FL_NOTARGET;
 	}
 	else if (ent->invis_active) // check invisibility
 	{
-		if (level.time - ent->power_framenum >= 5.0) {
+		if (level.time - ent->power_framenum >= 8.0) {
 			ent->flags ^= FL_NOTARGET;
 			ent->invis_active = false;
 			ent->cooldown_active = true;
 			ent->cooldown_framenum = level.time;
+			ent->s.event = EV_PLAYER_TELEPORT;
 		}
-		else
-			ent->flags ^= FL_NOTARGET;
 	}
 	else if (ent->teleport_active) // check teleport
 	{
-		if (level.time - ent->power_framenum >= 5.0) {
-			ent->flags ^= FL_NOTARGET;
-			ent->teleport_active = false;
-			ent->cooldown_active = true;
-			ent->cooldown_framenum = level.time;
-		}
-		else
-			ent->flags ^= FL_NOTARGET;
+		ent->teleport_active = false;
+		ent->cooldown_active = true;
+		ent->cooldown_framenum = level.time;
 	}
 	else if (ent->invinc_active) // check invincibility
 	{
@@ -1859,20 +1855,19 @@ void ClientSuperpowerActivation (edict_t *ent)
 			ent->invinc_active = false;
 			ent->cooldown_active = true;
 			ent->cooldown_framenum = level.time;
+			ent->s.event = EV_PLAYER_TELEPORT;
 		}
-		else
-			ent->flags ^= FL_GODMODE;
 	}
 	else if (ent->drain_active) // check drain
 	{
-		if (level.time - ent->power_framenum >= 5.0) {
-			ent->flags ^= FL_NOTARGET;
-			ent->drain_active = false;
-			ent->cooldown_active = true;
-			ent->cooldown_framenum = level.time;
-		}
-		else
-			ent->flags ^= FL_NOTARGET;
+		if (ent->health <= 175)
+			ent->health += 25;
+		else if (ent->health < 200)
+			ent->health = 200;
+
+		ent->drain_active = false;
+		ent->cooldown_active = true;
+		ent->cooldown_framenum = level.time;
 	}
 	else if (level.time - ent->cooldown_framenum >= 10.0) // check cooldown
 		ent->cooldown_active = false;
