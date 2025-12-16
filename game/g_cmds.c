@@ -899,6 +899,145 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+/*
+=================
+Superpowers
+=================
+*/
+
+void Cmd_SuperSpeed_f(edict_t *ent) 
+{
+	if (ent->speed_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Speed is already activated!\n");
+	else if (ent->power_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
+	else if (ent->cooldown_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else {
+		gi.AddCommandString("cl_forwardspeed 500)");
+		gi.AddCommandString("cl_sidespeed 300");
+		ent->speed_active = true;
+		ent->power_framenum = level.time;
+		ent->s.event = EV_PLAYER_TELEPORT;
+	}
+}
+
+void Cmd_SuperInvis_f(edict_t* ent) 
+{
+	if (ent->invis_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Invisibility is already activated!\n");
+	else if (ent->power_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
+	else if (ent->cooldown_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else if (ent->detected == true)
+		gi.cprintf(ent, PRINT_HIGH, "You cannot activate invisibility while in combat!\n");
+	else {
+		ent->invis_active = true;
+		ent->power_framenum = level.time;
+		ent->flags ^= FL_NOTARGET;
+		ent->s.event = EV_PLAYER_TELEPORT;
+	}
+}
+
+void Cmd_SuperTeleport_f(edict_t* ent) 
+{
+	edict_t* enemy;
+	vec3_t  vec;
+	int		enemy_dist;
+	int		closest_dist = 701;
+
+	enemy = NULL;
+	while ((enemy = findradius(enemy, ent->s.origin, 700)) != NULL)
+	{
+		if (enemy == ent)
+			continue;
+		if (!enemy->takedamage)
+			continue;
+
+		VectorSubtract(enemy->s.origin, ent->s.origin, vec);
+		enemy_dist = VectorLength(vec);
+
+		if (enemy_dist < closest_dist) {
+			closest_dist = enemy_dist;
+			ent->target_enemy = enemy;
+		}
+	}
+
+	if (ent->teleport_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Teleport is already activated!\n");
+	else if (ent->target_enemy == NULL)
+		gi.cprintf(ent, PRINT_HIGH, "Enemy not in range!\n");
+	else if (ent->power_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
+	else if (ent->cooldown_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else {
+		ent->s.origin[2] = ent->target_enemy->s.origin[2] + 150;
+		ent->s.origin[1] = ent->target_enemy->s.origin[1];
+		ent->s.origin[0] = ent->target_enemy->s.origin[0];
+		ent->teleport_active = true;
+		ent->s.event = EV_PLAYER_TELEPORT;
+	}
+}
+
+void Cmd_SuperInvinc_f(edict_t* ent) 
+{
+	if (ent->invinc_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Invincibility is already activated!\n");
+	else if (ent->power_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
+	else if (ent->cooldown_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else {
+		ent->invinc_active = true;
+		ent->power_framenum = level.time;
+		ent->flags ^= FL_GODMODE;
+		ent->s.event = EV_PLAYER_TELEPORT;
+	}
+}
+
+void Cmd_SuperDrain_f(edict_t* ent) 
+{
+	edict_t	*enemy;
+	vec3_t  vec;
+	int		enemy_dist;
+	int		closest_dist = 701;
+
+	ent->target_ent = NULL;
+	enemy = NULL;
+	while ((enemy = findradius(enemy, ent->s.origin, 700)) != NULL)
+	{
+		if (enemy == ent)
+			continue;
+		if (!enemy->takedamage)
+			continue;
+
+		VectorSubtract(enemy->s.origin, ent->s.origin, vec);
+		enemy_dist = VectorLength(vec);
+
+		if (enemy_dist < closest_dist) {
+			closest_dist = enemy_dist;
+			ent->target_enemy = enemy;
+		}
+	}
+
+	if (ent->drain_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Drain is already activated!\n");
+	else if (ent->target_enemy == NULL)
+		gi.cprintf(ent, PRINT_HIGH, "Enemy not in range!\n");
+	else if (ent->health == 200)
+		gi.cprintf(ent, PRINT_HIGH, "You are already at full health!\n");
+	else if (ent->power_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Another superpower is already in use!\n");
+	else if (ent->cooldown_active == true)
+		gi.cprintf(ent, PRINT_HIGH, "Superpowers cannot be used during cooldown!\n");
+	else {
+		ent->drain_active = true;
+		ent->target_enemy->health = 1;
+		ent->s.event = EV_PLAYER_TELEPORT;
+	}
+}
 
 /*
 =================
@@ -943,50 +1082,60 @@ void ClientCommand (edict_t *ent)
 	if (level.intermissiontime)
 		return;
 
-	if (Q_stricmp (cmd, "use") == 0)
-		Cmd_Use_f (ent);
-	else if (Q_stricmp (cmd, "drop") == 0)
-		Cmd_Drop_f (ent);
-	else if (Q_stricmp (cmd, "give") == 0)
-		Cmd_Give_f (ent);
-	else if (Q_stricmp (cmd, "god") == 0)
-		Cmd_God_f (ent);
-	else if (Q_stricmp (cmd, "notarget") == 0)
-		Cmd_Notarget_f (ent);
-	else if (Q_stricmp (cmd, "noclip") == 0)
-		Cmd_Noclip_f (ent);
-	else if (Q_stricmp (cmd, "inven") == 0)
-		Cmd_Inven_f (ent);
-	else if (Q_stricmp (cmd, "invnext") == 0)
-		SelectNextItem (ent, -1);
-	else if (Q_stricmp (cmd, "invprev") == 0)
-		SelectPrevItem (ent, -1);
-	else if (Q_stricmp (cmd, "invnextw") == 0)
-		SelectNextItem (ent, IT_WEAPON);
-	else if (Q_stricmp (cmd, "invprevw") == 0)
-		SelectPrevItem (ent, IT_WEAPON);
-	else if (Q_stricmp (cmd, "invnextp") == 0)
-		SelectNextItem (ent, IT_POWERUP);
-	else if (Q_stricmp (cmd, "invprevp") == 0)
-		SelectPrevItem (ent, IT_POWERUP);
-	else if (Q_stricmp (cmd, "invuse") == 0)
-		Cmd_InvUse_f (ent);
-	else if (Q_stricmp (cmd, "invdrop") == 0)
-		Cmd_InvDrop_f (ent);
-	else if (Q_stricmp (cmd, "weapprev") == 0)
-		Cmd_WeapPrev_f (ent);
-	else if (Q_stricmp (cmd, "weapnext") == 0)
-		Cmd_WeapNext_f (ent);
-	else if (Q_stricmp (cmd, "weaplast") == 0)
-		Cmd_WeapLast_f (ent);
-	else if (Q_stricmp (cmd, "kill") == 0)
-		Cmd_Kill_f (ent);
-	else if (Q_stricmp (cmd, "putaway") == 0)
-		Cmd_PutAway_f (ent);
-	else if (Q_stricmp (cmd, "wave") == 0)
-		Cmd_Wave_f (ent);
+	if (Q_stricmp(cmd, "use") == 0)
+		Cmd_Use_f(ent);
+	else if (Q_stricmp(cmd, "drop") == 0)
+		Cmd_Drop_f(ent);
+	else if (Q_stricmp(cmd, "give") == 0)
+		Cmd_Give_f(ent);
+	else if (Q_stricmp(cmd, "god") == 0)
+		Cmd_God_f(ent);
+	else if (Q_stricmp(cmd, "notarget") == 0)
+		Cmd_Notarget_f(ent);
+	else if (Q_stricmp(cmd, "noclip") == 0)
+		Cmd_Noclip_f(ent);
+	else if (Q_stricmp(cmd, "inven") == 0)
+		Cmd_Inven_f(ent);
+	else if (Q_stricmp(cmd, "invnext") == 0)
+		SelectNextItem(ent, -1);
+	else if (Q_stricmp(cmd, "invprev") == 0)
+		SelectPrevItem(ent, -1);
+	else if (Q_stricmp(cmd, "invnextw") == 0)
+		SelectNextItem(ent, IT_WEAPON);
+	else if (Q_stricmp(cmd, "invprevw") == 0)
+		SelectPrevItem(ent, IT_WEAPON);
+	else if (Q_stricmp(cmd, "invnextp") == 0)
+		SelectNextItem(ent, IT_POWERUP);
+	else if (Q_stricmp(cmd, "invprevp") == 0)
+		SelectPrevItem(ent, IT_POWERUP);
+	else if (Q_stricmp(cmd, "invuse") == 0)
+		Cmd_InvUse_f(ent);
+	else if (Q_stricmp(cmd, "invdrop") == 0)
+		Cmd_InvDrop_f(ent);
+	else if (Q_stricmp(cmd, "weapprev") == 0)
+		Cmd_WeapPrev_f(ent);
+	else if (Q_stricmp(cmd, "weapnext") == 0)
+		Cmd_WeapNext_f(ent);
+	else if (Q_stricmp(cmd, "weaplast") == 0)
+		Cmd_WeapLast_f(ent);
+	else if (Q_stricmp(cmd, "kill") == 0)
+		Cmd_Kill_f(ent);
+	else if (Q_stricmp(cmd, "putaway") == 0)
+		Cmd_PutAway_f(ent);
+	else if (Q_stricmp(cmd, "wave") == 0)
+		Cmd_Wave_f(ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	else if (Q_stricmp(cmd, "superspeed") == 0)
+		Cmd_SuperSpeed_f(ent);
+	else if (Q_stricmp(cmd, "superinvis") == 0)
+		Cmd_SuperInvis_f(ent);
+	else if (Q_stricmp(cmd, "superteleport") == 0)
+		Cmd_SuperTeleport_f(ent);
+	else if (Q_stricmp(cmd, "superinvinc") == 0)
+		Cmd_SuperInvinc_f(ent);
+	else if (Q_stricmp(cmd, "superdrain") == 0)
+		Cmd_SuperDrain_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

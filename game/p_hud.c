@@ -326,12 +326,12 @@ void HelpComputer (edict_t *ent)
 		"xv -250 yv -40 string2 \"%s\" "	// msg3
 		"xv -250 yv -28 string2 \"%s\" "	// msg4
 		"xv -250 yv -16 string2 \"%s\" "	// msg5
-		"xv -250 yv -4 string2 \"%s\" "	// msg6
+		"xv -250 yv -4 string2 \"%s\" "		// msg6
 		"xv -250 yv 8 string2 \"%s\" "		// msg7
 		"xv -250 yv 20 string2 \"%s\" ",	// msg8
 		msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8
 	);
-
+	
 	gi.WriteByte(svc_layout);
 	gi.WriteString(string);
 	gi.unicast(ent, true);
@@ -452,6 +452,11 @@ void G_SetStats (edict_t *ent)
 	{
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_quad");
 		ent->client->ps.stats[STAT_TIMER] = (ent->client->quad_framenum - level.framenum)/10;
+	}
+	if (ent->cooldown_active == true) // yeah its dumb but quad is also cooldown timer for superpowers
+	{
+		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex("p_quad");
+		ent->client->ps.stats[STAT_TIMER] = 10 - (int)(level.time - ent->cooldown_framenum);
 	}
 	else if (ent->client->invincible_framenum > level.framenum)
 	{

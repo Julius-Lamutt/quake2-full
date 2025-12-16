@@ -754,6 +754,7 @@ void InitClientPersistant (gclient_t *client);
 void InitClientResp (gclient_t *client);
 void InitBodyQue (void);
 void ClientBeginServerFrame (edict_t *ent);
+void ClientSuperpowerActivation(edict_t* ent);
 
 //
 // g_player.c
@@ -1109,5 +1110,22 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	// superpower data
+	float		power_framenum;		
+	float 		cooldown_framenum;	
+
+	qboolean	speed_active;
+	qboolean	invis_active;
+	qboolean	teleport_active;
+	qboolean    invinc_active;
+	qboolean	drain_active;
+	qboolean    power_active;
+	qboolean	cooldown_active;
+
+	// miscellaneous
+	edict_t     *target_enemy;
+
+	qboolean	detected;
 };
 

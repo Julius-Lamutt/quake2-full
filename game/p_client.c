@@ -1614,7 +1614,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		for (i=0 ; i<3 ; i++)
 		{
-			pm.s.origin[i] = ent->s.origin[i]*8;
+			pm.s.origin[i] = ent->s.origin[i]*8; 
 			pm.s.velocity[i] = ent->velocity[i]*8;
 		}
 
@@ -1740,6 +1740,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		other = g_edicts + i;
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
+
+	// update superpower status
+	ClientSuperpowerActivation(ent);
 	}
 }
 
@@ -1778,7 +1781,7 @@ void ClientBeginServerFrame (edict_t *ent)
 	if (ent->deadflag)
 	{
 		// wait for any button just going down
-		if ( level.time > client->respawn_time)
+		if (level.time > client->respawn_time)
 		{
 			// in deathmatch, only wait for attack button
 			if (deathmatch->value)
@@ -1802,4 +1805,80 @@ void ClientBeginServerFrame (edict_t *ent)
 			PlayerTrail_Add (ent->s.old_origin);
 
 	client->latched_buttons = 0;
+}
+
+/*
+==============
+ClientSuperpowerActivation
+
+This will be called once for each server frame to detect if
+a super power is in use. If so, it will activate/deactive 
+that specific power.
+==============
+*/
+
+void ClientSuperpowerActivation (edict_t *ent)
+{
+	edict_t	*enemy;
+	vec3_t	org;
+
+	if (ent->speed_active) // check super speed
+	{
+		if (level.time - ent->power_framenum >= 5.0) {
+			gi.AddCommandString("cl_forwardspeed 200");
+			gi.AddCommandString("cl_sidespeed 175");
+			ent->speed_active = false;
+			ent->cooldown_active = true;
+			ent->cooldown_framenum = level.time;
+			ent->s.event = EV_PLAYER_TELEPORT;
+		}
+	}
+	else if (ent->invis_active) // check invisibility
+	{
+		if (level.time - ent->power_framenum >= 8.0) {
+			ent->flags ^= FL_NOTARGET;
+			ent->invis_active = false;
+			ent->cooldown_active = true;
+			ent->cooldown_framenum = level.time;
+			ent->s.event = EV_PLAYER_TELEPORT;
+		}
+	}
+	else if (ent->teleport_active) // check teleport
+	{
+		ent->teleport_active = false;
+		ent->cooldown_active = true;
+		ent->cooldown_framenum = level.time;
+	}
+	else if (ent->invinc_active) // check invincibility
+	{
+		if (level.time - ent->power_framenum >= 5.0) {
+			ent->flags ^= FL_GODMODE;
+			ent->invinc_active = false;
+			ent->cooldown_active = true;
+			ent->cooldown_framenum = level.time;
+			ent->s.event = EV_PLAYER_TELEPORT;
+		}
+	}
+	else if (ent->drain_active) // check drain
+	{
+		if (ent->health <= 175)
+			ent->health += 25;
+		else if (ent->health < 200)
+			ent->health = 200;
+
+		ent->drain_active = false;
+		ent->cooldown_active = true;
+		ent->cooldown_framenum = level.time;
+	}
+	else if (ent->cooldown_active == true) 
+	{
+		if (level.time - ent->cooldown_framenum >= 10.0) // check cooldown
+			ent->cooldown_active = false;
+	}
+
+	// check if ANY power is active
+	if (ent->speed_active || ent->invis_active || ent->teleport_active || ent->invinc_active || ent->drain_active)
+		ent->power_active = true;
+	else 
+		ent->power_active = false;
 }
