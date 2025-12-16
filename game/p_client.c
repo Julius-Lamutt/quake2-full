@@ -1870,8 +1870,11 @@ void ClientSuperpowerActivation (edict_t *ent)
 		ent->cooldown_active = true;
 		ent->cooldown_framenum = level.time;
 	}
-	else if (level.time - ent->cooldown_framenum >= 10.0) // check cooldown
-		ent->cooldown_active = false;
+	else if (ent->cooldown_active == true) 
+	{
+		if (level.time - ent->cooldown_framenum >= 10.0) // check cooldown
+			ent->cooldown_active = false;
+	}
 
 	// check if ANY power is active
 	if (ent->speed_active || ent->invis_active || ent->teleport_active || ent->invinc_active || ent->drain_active)
