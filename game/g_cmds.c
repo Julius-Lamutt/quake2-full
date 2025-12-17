@@ -899,6 +899,19 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+/*
+=================
+Miscellaneous
+=================
+*/
+
+void Cmd_C4_f (edict_t *ent)
+{
+	if (ent->c4_grenade != NULL) {
+		ent->c4_grenade->think(ent->c4_grenade);
+		ent->c4_grenade = NULL;
+	}
+}
 
 /*
 =================
@@ -987,6 +1000,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	else if (Q_stricmp(cmd, "c4") == 0)
+		Cmd_C4_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }
