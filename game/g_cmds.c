@@ -921,6 +921,19 @@ void Cmd_SuperSpeed_f(edict_t *ent)
 		ent->s.event = EV_PLAYER_TELEPORT;
 	}
 }
+/*
+=================
+Miscellaneous
+=================
+*/
+
+void Cmd_C4_f (edict_t *ent)
+{
+	if (ent->c4_grenade != NULL) {
+		ent->c4_grenade->think(ent->c4_grenade);
+		ent->c4_grenade = NULL;
+	}
+}
 
 void Cmd_SuperInvis_f(edict_t* ent) 
 {
@@ -1039,6 +1052,14 @@ void Cmd_SuperDrain_f(edict_t* ent)
 	}
 }
 
+void Cmd_HyperSwitch_f(edict_t* ent)
+{
+	if (ent->hyper_vert != true)
+		ent->hyper_vert = true;
+	else 
+		ent->hyper_vert = false;
+}
+
 /*
 =================
 ClientCommand
@@ -1136,6 +1157,10 @@ void ClientCommand (edict_t *ent)
 		Cmd_SuperInvinc_f(ent);
 	else if (Q_stricmp(cmd, "superdrain") == 0)
 		Cmd_SuperDrain_f(ent);
+	else if (Q_stricmp(cmd, "c4") == 0)
+		Cmd_C4_f(ent);
+	else if (Q_stricmp(cmd, "hyperswitch") == 0)
+		Cmd_HyperSwitch_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

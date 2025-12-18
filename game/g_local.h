@@ -1127,5 +1127,9 @@ struct edict_s
 	edict_t     *target_enemy;
 
 	qboolean	detected;
+
+	edict_t		*c4_grenade;
+	qboolean    right_barrel;
+	qboolean    hyper_vert;
 };
 
