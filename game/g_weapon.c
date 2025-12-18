@@ -131,7 +131,7 @@ fire_lead
 This is an internal support routine used for bullet/pellet based weapons.
 =================
 */
-static void fire_lead (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int te_impact, int hspread, int vspread, int mod)
+static void fire_lead (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int te_impact, int hspread, int vspread, int mod, int shotgun)
 {
 	trace_t		tr;
 	vec3_t		dir;
@@ -142,6 +142,12 @@ static void fire_lead (edict_t *self, vec3_t start, vec3_t aimdir, int damage, i
 	vec3_t		water_start;
 	qboolean	water = false;
 	int			content_mask = MASK_SHOT | MASK_WATER;
+	int range;
+
+	if (shotgun == 1)
+		range = 256;
+	else
+		range = 8192;
 
 	tr = gi.trace (self->s.origin, NULL, NULL, start, self, MASK_SHOT);
 	if (!(tr.fraction < 1.0))
@@ -151,7 +157,7 @@ static void fire_lead (edict_t *self, vec3_t start, vec3_t aimdir, int damage, i
 
 		r = crandom()*hspread;
 		u = crandom()*vspread;
-		VectorMA (start, 8192, forward, end);
+		VectorMA (start, range, forward, end);
 		VectorMA (end, r, right, end);
 		VectorMA (end, u, up, end);
 
@@ -276,7 +282,7 @@ pistols, rifles, etc....
 */
 void fire_bullet (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod)
 {
-	fire_lead (self, start, aimdir, damage, kick, TE_GUNSHOT, hspread, vspread, mod);
+	fire_lead (self, start, aimdir, damage, kick, TE_GUNSHOT, hspread, vspread, mod, 0);
 }
 
 
@@ -292,7 +298,7 @@ void fire_shotgun (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int k
 	int		i;
 
 	for (i = 0; i < count; i++)
-		fire_lead (self, start, aimdir, damage, kick, TE_SHOTGUN, hspread, vspread, mod);
+		fire_lead (self, start, aimdir, damage, kick, TE_SHOTGUN, hspread, vspread, mod, 1);
 }
 
 

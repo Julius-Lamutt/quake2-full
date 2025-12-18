@@ -913,6 +913,14 @@ void Cmd_C4_f (edict_t *ent)
 	}
 }
 
+void Cmd_HyperSwitch_f(edict_t* ent)
+{
+	if (ent->hyper_vert != true)
+		ent->hyper_vert = true;
+	else 
+		ent->hyper_vert = false;
+}
+
 /*
 =================
 ClientCommand
@@ -1002,6 +1010,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_PlayerList_f(ent);
 	else if (Q_stricmp(cmd, "c4") == 0)
 		Cmd_C4_f(ent);
+	else if (Q_stricmp(cmd, "hyperswitch") == 0)
+		Cmd_HyperSwitch_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

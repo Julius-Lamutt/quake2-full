@@ -1111,5 +1111,7 @@ struct edict_s
 	monsterinfo_t	monsterinfo;
 
 	edict_t		*c4_grenade;
+	qboolean    right_barrel;
+	qboolean    hyper_vert;
 };
 
