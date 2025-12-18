@@ -921,19 +921,6 @@ void Cmd_SuperSpeed_f(edict_t *ent)
 		ent->s.event = EV_PLAYER_TELEPORT;
 	}
 }
-/*
-=================
-Miscellaneous
-=================
-*/
-
-void Cmd_C4_f (edict_t *ent)
-{
-	if (ent->c4_grenade != NULL) {
-		ent->c4_grenade->think(ent->c4_grenade);
-		ent->c4_grenade = NULL;
-	}
-}
 
 void Cmd_SuperInvis_f(edict_t* ent) 
 {
@@ -1049,6 +1036,20 @@ void Cmd_SuperDrain_f(edict_t* ent)
 		ent->drain_active = true;
 		ent->target_enemy->health = 1;
 		ent->s.event = EV_PLAYER_TELEPORT;
+	}
+}
+
+/*
+=================
+Miscellaneous
+=================
+*/
+
+void Cmd_C4_f(edict_t* ent)
+{
+	if (ent->c4_grenade != NULL) {
+		ent->c4_grenade->think(ent->c4_grenade);
+		ent->c4_grenade = NULL;
 	}
 }
 
