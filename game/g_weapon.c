@@ -689,8 +689,8 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 			else
 				ignore = NULL;
 
-			if ((tr.ent != self) && (tr.ent->takedamage))
-				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
+			if ((tr.ent != self) && (tr.ent->takedamage)) 
+				T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, -kick, 0, MOD_RAILGUN);
 		}
 
 		VectorCopy (tr.endpos, from);
@@ -756,7 +756,7 @@ void bfg_explode (edict_t *self)
 			gi.WriteByte (TE_BFG_EXPLOSION);
 			gi.WritePosition (ent->s.origin);
 			gi.multicast (ent->s.origin, MULTICAST_PHS);
-			T_Damage (ent, self, self->owner, self->velocity, ent->s.origin, vec3_origin, 1, 50, DAMAGE_ENERGY, MOD_BFG_EFFECT);
+			T_Damage (ent, self, self->owner, self->velocity, ent->s.origin, vec3_origin, 1, 200, DAMAGE_ENERGY, MOD_BFG_EFFECT);
 		}
 	}
 
@@ -782,7 +782,7 @@ void bfg_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 
 	// core explosion - prevents firing it into the wall/floor
 	if (other->takedamage)
-		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 1, 50, 0, MOD_BFG_BLAST);
+		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 1, 200, 0, MOD_BFG_BLAST);
 	T_RadiusDamage(self, self->owner, 1, other, 100, MOD_BFG_BLAST);
 
 	gi.sound (self, CHAN_VOICE, gi.soundindex ("weapons/bfg__x1b.wav"), 1, ATTN_NORM, 0);

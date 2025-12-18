@@ -759,7 +759,7 @@ ROCKET
 void Weapon_RocketLauncher_Fire (edict_t *ent)
 {
 	vec3_t	offset, start;
-	vec3_t	forward, right;
+	vec3_t	forward, right, up;
 	int		damage;
 	float	damage_radius;
 	int		radius_damage;
@@ -773,14 +773,19 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 		radius_damage *= 4;
 	}
 
-	AngleVectors (ent->client->v_angle, forward, right, NULL);
+	AngleVectors (ent->client->v_angle, forward, right, up);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+	up[0] = up[0] * -1;
+	up[1] = up[1] * -1;
+	up[2] = up[2] * -1;
+	fire_rocket (ent, start, up, 1, 650, damage_radius, radius_damage);
+	up[0] = up[0] - 5;
+	fire_rocket(ent, start, up, 1, 650, damage_radius, radius_damage);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1314,8 +1319,8 @@ void weapon_railgun_fire (edict_t *ent)
 	}
 	else
 	{
-		damage = 150;
-		kick = 250;
+		damage = 1;
+		kick = 500;
 	}
 
 	if (is_quad)
