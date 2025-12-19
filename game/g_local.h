@@ -754,6 +754,7 @@ void InitClientPersistant (gclient_t *client);
 void InitClientResp (gclient_t *client);
 void InitBodyQue (void);
 void ClientBeginServerFrame (edict_t *ent);
+void ActivateSonar(edict_t *ent);
 
 //
 // g_player.c
@@ -1115,8 +1116,13 @@ struct edict_s
 	qboolean	evasion;
 	qboolean	alert;
 
-	int		evasion_time;
+	int			evasion_time;
 
 	qboolean	hidden;
+
+	int 		stop_time;
+	vec3_t		stop_pos;
+	vec3_t		curr_pos;
+	qboolean 	stop_move;
 };
 

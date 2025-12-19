@@ -1762,7 +1762,9 @@ void ClientThink(edict_t* ent, usercmd_t* ucmd)
 		ent->flags ^= FL_NOTARGET;
 	}
 
-		
+	// update sonar
+	if (client->ps.pmove.pm_flags & PMF_DUCKED)
+		ActivateSonar(ent);
 }
 
 
@@ -1774,9 +1776,9 @@ This will be called once for each server frame, before running
 any other entities in the world.
 ==============
 */
-void ClientBeginServerFrame (edict_t *ent)
+void ClientBeginServerFrame(edict_t* ent)
 {
-	gclient_t	*client;
+	gclient_t* client;
 	int			buttonMask;
 
 	if (level.intermissiontime)
@@ -1793,14 +1795,14 @@ void ClientBeginServerFrame (edict_t *ent)
 
 	// run weapon animations if it hasn't been done by a ucmd_t
 	if (!client->weapon_thunk && !client->resp.spectator)
-		Think_Weapon (ent);
+		Think_Weapon(ent);
 	else
 		client->weapon_thunk = false;
 
 	if (ent->deadflag)
 	{
 		// wait for any button just going down
-		if ( level.time > client->respawn_time)
+		if (level.time > client->respawn_time)
 		{
 			// in deathmatch, only wait for attack button
 			if (deathmatch->value)
@@ -1808,8 +1810,8 @@ void ClientBeginServerFrame (edict_t *ent)
 			else
 				buttonMask = -1;
 
-			if ( ( client->latched_buttons & buttonMask ) ||
-				(deathmatch->value && ((int)dmflags->value & DF_FORCE_RESPAWN) ) )
+			if ((client->latched_buttons & buttonMask) ||
+				(deathmatch->value && ((int)dmflags->value & DF_FORCE_RESPAWN)))
 			{
 				respawn(ent);
 				client->latched_buttons = 0;
@@ -1820,8 +1822,65 @@ void ClientBeginServerFrame (edict_t *ent)
 
 	// add player trail so monsters can follow
 	if (!deathmatch->value)
-		if (!visible (ent, PlayerTrail_LastSpot() ) )
-			PlayerTrail_Add (ent->s.old_origin);
+		if (!visible(ent, PlayerTrail_LastSpot()))
+			PlayerTrail_Add(ent->s.old_origin);
 
 	client->latched_buttons = 0;
+}
+
+/*
+==============
+Activate Sonar
+
+This will be start a sonar pulse if the player is crouched,
+motionless, and an enemy is nearby. Works great with teleport.
+==============
+*/
+
+void ActivateSonar(edict_t *ent)
+{
+	edict_t *enemy;
+	edict_t *closest_enemy;
+	vec3_t  vec;
+	int		enemy_dist;
+	int		closest_dist = 701;
+
+	if (ent->stop_move != true) {
+		ent->stop_move = true;
+		ent->stop_time = level.time;
+		VectorCopy(ent->s.origin, ent->stop_pos);
+	}
+	else if (ent->stop_move == true) {
+		// check for nearby enemies after 3 seconds of stillness
+		VectorCopy(ent->s.origin, ent->curr_pos);
+		if (level.time - ent->stop_time >= 3.0) 
+		{
+			enemy = NULL;
+			closest_enemy = NULL;
+
+			// find closest enemy wihtin teleport distance
+			while ((enemy = findradius(enemy, ent->s.origin, 700)) != NULL)
+			{
+				if (enemy == ent)
+					continue;
+				if (!enemy->takedamage)
+					continue;
+
+				VectorSubtract(enemy->s.origin, ent->s.origin, vec);
+				enemy_dist = VectorLength(vec);
+
+				if (enemy_dist < closest_dist) {
+					closest_dist = enemy_dist;
+					closest_enemy = enemy;
+				}
+			}
+			if (closest_enemy != NULL) {
+				if (VectorCompare(ent->curr_pos, ent->stop_pos) == 1) {
+					ent->s.event = EV_PLAYER_TELEPORT;
+				}
+			}
+			ent->stop_move = false;
+		}
+	}
+
 }
