@@ -1765,6 +1765,16 @@ void ClientThink(edict_t* ent, usercmd_t* ucmd)
 	// update sonar
 	if (client->ps.pmove.pm_flags & PMF_DUCKED)
 		ActivateSonar(ent);
+
+	// update superpower access
+	if (ent->power_access != true && ent->health_count > 1)
+		ent->power_access = true;
+	
+	// update weapon access
+	if (ent->weapon_access != true && ent->armor_count > 1) {
+		ent->weapon_access = true;
+		gi.AddCommandString("give all");
+	}
 }
 
 

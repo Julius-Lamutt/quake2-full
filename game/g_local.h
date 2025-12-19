@@ -1126,5 +1126,12 @@ struct edict_s
 	qboolean 	stop_move;
 
 	qboolean    show_objectives;
+
+	int			kill_count;
+	int			health_count;
+	int			armor_count;
+
+	qboolean    power_access;
+	qboolean    weapon_access;
 };
 

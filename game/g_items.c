@@ -555,6 +555,11 @@ void MegaHealth_think (edict_t *self)
 
 qboolean Pickup_Health (edict_t *ent, edict_t *other)
 {
+	if (!(other->health_count > 0))
+		other->health_count = 1;
+	else
+		other->health_count++;
+
 	if (!(ent->style & HEALTH_IGNORE_MAX))
 		if (other->health >= other->max_health)
 			return false;
@@ -612,6 +617,11 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 	int				newcount;
 	float			salvage;
 	int				salvagecount;
+
+	if (!(other->armor_count > 0))
+		other->armor_count = 1;
+	else
+		other->armor_count++;
 
 	// get info on new armor
 	newinfo = (gitem_armor_t *)ent->item->info;
