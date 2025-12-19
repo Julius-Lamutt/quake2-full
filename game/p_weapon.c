@@ -826,7 +826,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	vec3_t	offset;
 	edict_t enemy;
 
-	if (is_quad)
+	if (is_quad || ((ent->client->ps.pmove.pm_flags & PMF_DUCKED) && ent->normal))
 		damage *= 4;
 	AngleVectors (ent->client->v_angle, forward, right, up);
 	VectorSet(offset, 24, 8, ent->viewheight-8);

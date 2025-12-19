@@ -696,11 +696,35 @@ char *single_statusbar =
 "	pic	9 "
 "endif "
 
-//  help / weapon icon 
+// help / weapon icon 
 "if 11 "
 "	xv	148 "
 "	pic	11 "
 "endif "
+
+// normal phase
+"if 18 "
+"	xr	-24 "
+"	yt	 72 "
+"	pic	18 "
+"endif "
+
+// evasion phase
+"if 19 "
+"	xr	-24 "
+"	yt	 72 "
+"	pic	19 "
+"	xr -58 "
+"	num 2	20 "	
+"endif "
+
+// alert phase
+"if 21 "
+"	xr	-24 "
+"	yt	 72 "
+"	pic	21 "
+"endif "
+
 ;
 
 char *dm_statusbar =

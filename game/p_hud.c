@@ -480,6 +480,43 @@ void G_SetStats (edict_t *ent)
 	}
 
 	//
+	// normal/evasion/alert phase
+	//
+
+	if (ent->normal) // normal phase
+	{
+		ent->client->ps.stats[STAT_NORMAL_ICON] = gi.imageindex("i_powershield");
+	}
+	else
+	{
+		ent->client->ps.stats[STAT_NORMAL_ICON] = 0;
+	}
+
+	if (ent->evasion) // evasion phase
+	{
+		if (level.time - ent->evasion_time >= 10.0) {
+			ent->evasion = false;
+			ent->normal = true;
+		}
+		ent->client->ps.stats[STAT_EVASION_ICON] = gi.imageindex("p_rebreather");
+		ent->client->ps.stats[STAT_EVASION_TIMER] = 10 - (level.time - ent->evasion_time);
+	}
+	else
+	{
+		ent->client->ps.stats[STAT_EVASION_ICON] = 0;
+		ent->client->ps.stats[STAT_EVASION_TIMER] = 0;
+	} 
+
+	if (ent->alert) // alert phase
+	{
+		ent->client->ps.stats[STAT_ALERT_ICON] = gi.imageindex("p_invulnerability");
+	}
+	else
+	{
+		ent->client->ps.stats[STAT_ALERT_ICON] = 0;
+	}
+
+	//
 	// selected item
 	//
 	if (ent->client->pers.selected_item == -1)
