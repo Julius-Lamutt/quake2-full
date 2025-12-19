@@ -1124,5 +1124,7 @@ struct edict_s
 	vec3_t		stop_pos;
 	vec3_t		curr_pos;
 	qboolean 	stop_move;
+
+	qboolean    show_objectives;
 };
 

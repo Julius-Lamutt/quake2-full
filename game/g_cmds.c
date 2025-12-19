@@ -899,6 +899,21 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+/*
+==================
+Cmd_Objective_f
+
+Display the objectives menu
+==================
+*/
+
+void Cmd_Objective_f(edict_t* ent)
+{
+	if (ent->show_objectives != true && ent->client->showhelp == false)
+		ent->show_objectives = true;
+	else if (ent->show_objectives == true && ent->client->showhelp == false)
+		ent->show_objectives = false;
+}
 
 /*
 =================
@@ -987,6 +1002,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	else if (Q_stricmp (cmd, "objective") == 0)
+		Cmd_Objective_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

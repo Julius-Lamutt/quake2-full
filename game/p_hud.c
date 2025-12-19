@@ -311,30 +311,47 @@ void HelpComputer (edict_t *ent)
 	char*	msg7;
 	char*	msg8;
 
-	msg1 = "HELP MENU";
-	msg2 = "Welcome to the Quake II: Stealth Edition!";
-	msg3 = "There are many new features desgined to provide a SOLID stealth experience. These features include:";
-	msg4 = "1. Superpowers (Yes... superpowers!)";
-	msg5 = "2. Weapons";
-	msg6 = "3. Items";
-	msg7 = "4. Stealth Mechanics";
-	msg8 = "5. Level Objectives";
-	
-	Com_sprintf(string, sizeof(string),
-		"xv 125 yv -100 string2 \"%s\" "	// msg1
-		"xv -10 yv -60 string2 \"%s\" "		// msg2
-		"xv -250 yv -40 string2 \"%s\" "	// msg3
-		"xv -250 yv -28 string2 \"%s\" "	// msg4
-		"xv -250 yv -16 string2 \"%s\" "	// msg5
-		"xv -250 yv -4 string2 \"%s\" "		// msg6
-		"xv -250 yv 8 string2 \"%s\" "		// msg7
-		"xv -250 yv 20 string2 \"%s\" ",	// msg8
-		msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8
-	);
+	if (ent->show_objectives != true)
+	{
+		msg1 = "HELP MENU";
+		msg2 = "Welcome to the Quake II: Stealth Edition!";
+		msg3 = "There are many new features desgined to provide a SOLID stealth experience. These features include:";
+		msg4 = "1. Superpowers (Yes... superpowers!)";
+		msg5 = "2. Weapons";
+		msg6 = "3. Items";
+		msg7 = "4. Stealth Mechanics";
+		msg8 = "5. Level Objectives";
+
+		Com_sprintf(string, sizeof(string),
+			"xv 125 yv -100 string2 \"%s\" "	// msg1
+			"xv -10 yv -60 string2 \"%s\" "		// msg2
+			"xv -250 yv -40 string2 \"%s\" "	// msg3
+			"xv -250 yv -28 string2 \"%s\" "	// msg4
+			"xv -250 yv -16 string2 \"%s\" "	// msg5
+			"xv -250 yv -4 string2 \"%s\" "		// msg6
+			"xv -250 yv 8 string2 \"%s\" "		// msg7
+			"xv -250 yv 20 string2 \"%s\" ",	// msg8
+			msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8
+		);
+	}
+	else
+	{
+		msg4 = "1. To unlock superpowers, collect TWO health packs ";
+		msg5 = "2. To unlock weapons, collect TWO shield packs ";
+		msg6 = "3. Using any method, take out Five total enemies";
+
+		Com_sprintf(string, sizeof(string),
+			"xv -50 yv -28 string2 \"%s\" "	// msg4
+			"xv -50 yv -16 string2 \"%s\" "	// msg5
+			"xv -50 yv -4 string2 \"%s\" ",	// msg6
+			msg4, msg5, msg6
+		);
+	}
 
 	gi.WriteByte(svc_layout);
 	gi.WriteString(string);
 	gi.unicast(ent, true);
+
 }
 
 
