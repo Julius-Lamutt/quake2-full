@@ -511,8 +511,13 @@ enemy as activator.
 void monster_death_use (edict_t *self)
 {
 
-	if (self->enemy->client)
+	if (self->enemy->client) {
 		self->enemy->alert = false;
+		if (!(self->enemy->kill_count > 0))
+			self->enemy->kill_count = 1;
+		else 
+			self->enemy->kill_count++;
+	}
 
 	self->flags &= ~(FL_FLY|FL_SWIM);
 	self->monsterinfo.aiflags &= AI_GOOD_GUY;

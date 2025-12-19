@@ -907,6 +907,9 @@ Superpowers
 
 void Cmd_SuperSpeed_f(edict_t *ent) 
 {
+	if (ent->power_access != true)
+		return;
+
 	if (ent->speed_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Speed is already activated!\n");
 	else if (ent->power_active == true)
@@ -924,6 +927,9 @@ void Cmd_SuperSpeed_f(edict_t *ent)
 
 void Cmd_SuperInvis_f(edict_t* ent) 
 {
+	if (ent->power_access != true)
+		return;
+
 	if (ent->invis_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Invisibility is already activated!\n");
 	else if (ent->power_active == true)
@@ -942,6 +948,9 @@ void Cmd_SuperInvis_f(edict_t* ent)
 
 void Cmd_SuperTeleport_f(edict_t* ent) 
 {
+	if (ent->power_access != true)
+		return;
+
 	edict_t* enemy;
 	vec3_t  vec;
 	int		enemy_dist;
@@ -983,6 +992,9 @@ void Cmd_SuperTeleport_f(edict_t* ent)
 
 void Cmd_SuperInvinc_f(edict_t* ent) 
 {
+	if (ent->power_access != true)
+		return;
+
 	if (ent->invinc_active == true)
 		gi.cprintf(ent, PRINT_HIGH, "Invincibility is already activated!\n");
 	else if (ent->power_active == true)
@@ -999,6 +1011,9 @@ void Cmd_SuperInvinc_f(edict_t* ent)
 
 void Cmd_SuperDrain_f(edict_t* ent) 
 {
+	if (ent->power_access != true)
+		return;
+
 	edict_t	*enemy;
 	vec3_t  vec;
 	int		enemy_dist;
@@ -1037,6 +1052,20 @@ void Cmd_SuperDrain_f(edict_t* ent)
 		ent->target_enemy->health = 1;
 		ent->s.event = EV_PLAYER_TELEPORT;
 	}
+}
+
+/*
+==================
+Display the objectives menu
+==================
+*/
+
+void Cmd_Objective_f(edict_t* ent)
+{
+	if (ent->show_objectives != true && ent->client->showhelp == false)
+		ent->show_objectives = true;
+	else if (ent->show_objectives == true && ent->client->showhelp == false)
+		ent->show_objectives = false;
 }
 
 /*
@@ -1162,6 +1191,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_C4_f(ent);
 	else if (Q_stricmp(cmd, "hyperswitch") == 0)
 		Cmd_HyperSwitch_f(ent);
+	else if (Q_stricmp (cmd, "objective") == 0)
+		Cmd_Objective_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

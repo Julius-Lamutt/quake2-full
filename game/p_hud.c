@@ -310,31 +310,71 @@ void HelpComputer (edict_t *ent)
 	char*	msg6;
 	char*	msg7;
 	char*	msg8;
+	char*	msg9;
+	char*	msg10;
+	char*	msg11;
+	char*	msg12;
 
-	msg1 = "HELP MENU";
-	msg2 = "Welcome to the Quake II: Stealth Edition!";
-	msg3 = "There are many new features desgined to provide a SOLID stealth experience. These features include:";
-	msg4 = "1. Superpowers (Yes... superpowers!)";
-	msg5 = "2. Weapons";
-	msg6 = "3. Items";
-	msg7 = "4. Stealth Mechanics";
-	msg8 = "5. Level Objectives";
-	
-	Com_sprintf(string, sizeof(string),
-		"xv 125 yv -100 string2 \"%s\" "	// msg1
-		"xv -10 yv -60 string2 \"%s\" "		// msg2
-		"xv -250 yv -40 string2 \"%s\" "	// msg3
-		"xv -250 yv -28 string2 \"%s\" "	// msg4
-		"xv -250 yv -16 string2 \"%s\" "	// msg5
-		"xv -250 yv -4 string2 \"%s\" "		// msg6
-		"xv -250 yv 8 string2 \"%s\" "		// msg7
-		"xv -250 yv 20 string2 \"%s\" ",	// msg8
-		msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8
-	);
-	
+	if (ent->show_objectives != true)
+	{
+		msg1 = "HELP MENU";
+		msg2 = "Welcome to the Quake II: Stealth Edition!";
+		msg3 = "There are many new features desgined to provide a SOLID stealth experience. These features include:";
+		msg4 = "1. Superpowers (Yes... superpowers!)";
+		msg5 = "   Superspeed -> Y   Invisibility -> U   Teleport -> I   Invincibility -> O   Drain -> P";
+		msg6 = "2. Weapons";
+		msg7 = "   Pistol -> 1   Sawed-Off Shotgun -> 2   Hybrid -> 3   Burst-Assault Rifle -> 4   Full-Auto GL -> 5";
+		msg8 = "   C4 -> 6   Rocket Jump -> 7   Plasma Cutter -> 8   Magnet Gun -> 9   The Big Push -> 0";
+		msg9 = "3. Stealth Mechanics";
+		msg10 = "   Mechanics include alert phases, light/dark, crouching, surprise attacks, and sonar.";
+		msg11 = "4. Level Objectives";
+		msg12 = "   Can be found by leaving menu, pressing 'J', and returning to the menu. Repeat to revert.";
+
+		Com_sprintf(string, sizeof(string),
+			"xv 125 yv -100 string2 \"%s\" "	// msg1
+			"xv -10 yv -60 string2 \"%s\" "		// msg2
+			"xv -250 yv -40 string2 \"%s\" "	// msg3
+			"xv -250 yv -25 string2 \"%s\" "	// msg4
+			"xv -250 yv -10 string2 \"%s\" "	// msg5
+			"xv -250 yv 5 string2 \"%s\" "		// msg6
+			"xv -250 yv 20 string2 \"%s\" "		// msg7
+			"xv -250 yv 35 string2 \"%s\" "		// msg8
+			"xv -250 yv 50 string2 \"%s\" "		// msg9
+			"xv -250 yv 65 string2 \"%s\" "		// msg10
+			"xv -250 yv 80 string2 \"%s\" "		// msg11
+			"xv -250 yv 95 string2 \"%s\" ",	// msg12
+			msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8, msg9, msg10, msg11, msg12
+		);
+	}
+	else
+	{
+		if (ent->health_count < 2)
+			msg4 = "1. To unlock superpowers, collect TWO health packs";
+		else 
+			msg4 = "1. Completed!";
+
+		if (ent->armor_count < 2)
+			msg5 = "2. To unlock weapons, collect TWO shield packs";
+		else 
+			msg5 = "2. Completed!";
+
+		if (ent->kill_count < 5)
+			msg6 = "3. Using any method, take out Five total enemies";
+		else
+			msg6 = "3. Completed!";
+
+		Com_sprintf(string, sizeof(string),
+			"xv -50 yv -28 string2 \"%s\" "	// msg4
+			"xv -50 yv -16 string2 \"%s\" "	// msg5
+			"xv -50 yv -4 string2 \"%s\" ",	// msg6
+			msg4, msg5, msg6
+		);
+	}
+
 	gi.WriteByte(svc_layout);
 	gi.WriteString(string);
 	gi.unicast(ent, true);
+
 }
 
 
