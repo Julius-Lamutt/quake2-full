@@ -326,7 +326,7 @@ void HelpComputer (edict_t *ent)
 		"xv -250 yv -40 string2 \"%s\" "	// msg3
 		"xv -250 yv -28 string2 \"%s\" "	// msg4
 		"xv -250 yv -16 string2 \"%s\" "	// msg5
-		"xv -250 yv -4 string2 \"%s\" "	// msg6
+		"xv -250 yv -4 string2 \"%s\" "		// msg6
 		"xv -250 yv 8 string2 \"%s\" "		// msg7
 		"xv -250 yv 20 string2 \"%s\" ",	// msg8
 		msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8
@@ -472,6 +472,43 @@ void G_SetStats (edict_t *ent)
 	{
 		ent->client->ps.stats[STAT_TIMER_ICON] = 0;
 		ent->client->ps.stats[STAT_TIMER] = 0;
+	}
+
+	//
+	// normal/evasion/alert phase
+	//
+
+	if (ent->normal) // normal phase
+	{
+		ent->client->ps.stats[STAT_NORMAL_ICON] = gi.imageindex("i_powershield");
+	}
+	else
+	{
+		ent->client->ps.stats[STAT_NORMAL_ICON] = 0;
+	}
+
+	if (ent->evasion) // evasion phase
+	{
+		if (level.time - ent->evasion_time >= 10.0) {
+			ent->evasion = false;
+			ent->normal = true;
+		}
+		ent->client->ps.stats[STAT_EVASION_ICON] = gi.imageindex("p_rebreather");
+		ent->client->ps.stats[STAT_EVASION_TIMER] = 10 - (level.time - ent->evasion_time);
+	}
+	else
+	{
+		ent->client->ps.stats[STAT_EVASION_ICON] = 0;
+		ent->client->ps.stats[STAT_EVASION_TIMER] = 0;
+	} 
+
+	if (ent->alert) // alert phase
+	{
+		ent->client->ps.stats[STAT_ALERT_ICON] = gi.imageindex("p_invulnerability");
+	}
+	else
+	{
+		ent->client->ps.stats[STAT_ALERT_ICON] = 0;
 	}
 
 	//

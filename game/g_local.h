@@ -1109,5 +1109,14 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	// alert phases
+	qboolean	normal;
+	qboolean	evasion;
+	qboolean	alert;
+
+	int		evasion_time;
+
+	qboolean	hidden;
 };
 

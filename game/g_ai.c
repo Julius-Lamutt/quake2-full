@@ -496,7 +496,7 @@ qboolean FindTarget (edict_t *self)
 // this is where we would check invisibility
 
 		// is client in an spot too dark to be seen?
-		if (client->light_level <= 5)
+		if (client->light_level <= 32)
 			return false;
 
 		if (!visible (self, client))
@@ -609,6 +609,12 @@ qboolean M_CheckAttack (edict_t *self)
 	vec3_t	spot1, spot2;
 	float	chance;
 	trace_t	tr;
+
+	if (self->enemy->client) {
+		self->enemy->normal = false;
+		self->enemy->evasion = false;
+		self->enemy->alert = true;
+	}
 
 	if (self->enemy->health > 0)
 	{
@@ -995,6 +1001,15 @@ void ai_run (edict_t *self, float dist)
 		self->monsterinfo.aiflags |= (AI_LOST_SIGHT | AI_PURSUIT_LAST_SEEN);
 		self->monsterinfo.aiflags &= ~(AI_PURSUE_NEXT | AI_PURSUE_TEMP);
 		new = true;
+
+		if (self->enemy->client) 
+		{
+			if (self->enemy->evasion != true && self->enemy->normal != true) {
+				self->enemy->alert = false;
+				self->enemy->evasion = true;
+				self->enemy->evasion_time = level.time;
+			}
+		}
 	}
 
 	if (self->monsterinfo.aiflags & AI_PURSUE_NEXT)
