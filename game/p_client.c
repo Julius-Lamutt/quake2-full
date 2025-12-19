@@ -1750,6 +1750,19 @@ void ClientThink(edict_t* ent, usercmd_t* ucmd)
 	if (ent->alert != true && ent->evasion != true)
 		ent->normal = true;
 
+	// update crouch visibility
+	if (client->ps.pmove.pm_flags & PMF_DUCKED) {
+		if (ent->hidden != true) {
+			ent->hidden = true;
+			ent->flags ^= FL_NOTARGET;
+		}
+	}
+	else if (ent->hidden == true) {
+		ent->hidden = false;
+		ent->flags ^= FL_NOTARGET;
+	}
+
+		
 }
 
 
